@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "MiMo TTS",
+    "description": "Free text-to-speech via Xiaomi MiMo TTS, exposed as a model tool that writes the synthesized audio to a local file."
+  }
+}
