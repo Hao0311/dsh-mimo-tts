@@ -1,0 +1,36 @@
+{
+  "name": "dsh-mimo-tts",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md"
+  ],
+  "description": "Xiaomi MiMo TTS for DSH: a model tool that writes speech to a file, plus a speaker action on every finalized answer that reads it aloud in the Web GUI, with auto-read, voice choice, custom voice by description or sample, and a Speech settings page in the sidebar.",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-chat"
+      ]
+    }
+  },
+  "engines": {
+    "dsh": ">=0.1.7-0"
+  }
+}
