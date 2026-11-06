@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Speech synthesis">
+  <rect width="64" height="64" rx="14" fill="#101010"/>
+  <path d="M14 27h9l12-9v28l-12-9h-9z" fill="#ff7a1a"/>
+  <path d="M41 24c4 2.6 6.5 5.6 6.5 8s-2.5 5.4-6.5 8" fill="none" stroke="#ffb37a" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M46.5 17.5c6 4 9.5 9 9.5 14.5s-3.5 10.5-9.5 14.5" fill="none" stroke="#ff7a1a" stroke-width="3.4" stroke-linecap="round" opacity="0.75"/>
+</svg>
