@@ -8,8 +8,11 @@
 ## 安装
 
 ```sh
-dsh plugin --profile web add dsh-mimo-tts
+dsh plugin --profile web add github:Hao0311/dsh-mimo-tts
 ```
+
+> 不要用 `dsh plugin add dsh-mimo-tts` 直装：npm 上没有对应安装包（404），
+> 且 `lengmodkx/dsh-mimo-tts` 与本插件**同包名**，两者不能同时安装。
 
 本仓库/目录形态（开发时）：
 
@@ -101,3 +104,12 @@ MIT。
 ### 计费
 
 MiMo TTS 目前官方标为**限时免费**（三个模型同一个计费口径），免费期结束后按平台账单计费。沿用已配置的 `XIAOMI_API_KEY`（与 MiMo 大模型共用同一个 key），无需另外申请。
+## 2026-11-06 变更：移除动作行播报按钮
+
+主窗口回答动作行的 🔊 按钮**已移除**（用户不喜欢）。播报相关能力全部收进侧边栏「语音设置」：
+
+- 自动播报开关（只对新结束的回答生效）
+- 试听
+- 三种模型与音色设置
+
+`mimo_tts` 模型工具不受影响，仍然可用。
