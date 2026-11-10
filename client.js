@@ -273,27 +273,6 @@ window.__ModuleLoader__.load({
       }
     }
 
-    /** 当前会话最后一条已定稿助手消息的 messageId（动作行按钮已移除后，自动播报靠它判断）。 */
-    function latestAssistantMessageId(useChat) {
-      if (typeof useChat !== 'function') return undefined;
-      try {
-        return useChat((snapshot) => {
-          try {
-            for (let i = snapshot.order.length - 1; i >= 0; i -= 1) {
-              const node = snapshot.nodes.get(snapshot.order[i]);
-              const finalNode = node?.data?.finalNode;
-              if (finalNode?.messageId) return finalNode.messageId;
-            }
-          } catch {
-            /* 忽略 */
-          }
-          return undefined;
-        });
-      } catch {
-        return undefined;
-      }
-    }
-
     /** DOM 兜底：从动作行往上找最近的前置文本节点。 */
     function textFromDom(el) {
       try {
@@ -715,7 +694,6 @@ window.__ModuleLoader__.load({
         const [error, setError] = React.useState('');
         // 在渲染期取一次消息文本（useChat 只能在渲染期调用），点击/自动播报时复用。
         const snapshotText = textFromSnapshot(props.useChat, messageId);
-        const latestMessageId = latestAssistantMessageId(props.useChat);
 
         React.useEffect(() => subscribe(() => setPlaying(player.messageId === messageId)), [messageId]);
 
@@ -764,11 +742,14 @@ window.__ModuleLoader__.load({
           setMenuAnchor({ x: Math.max(8, Math.min(window.innerWidth - 210, rect.left - 150)), y: rect.bottom + 6 });
         }, []);
 
-        // 自动播报：动作行按钮已移除，触发条件改为「本条就是最后一条已定稿回答」；页面刚打开时不动。
+        // 自动播报：新回答的动作行挂载时触发；历史消息和刚打开页面时不动。
         React.useEffect(() => {
           if (!prefs.auto) return undefined;
           if (Date.now() - BOOT_AT < AUTO_WARMUP_MS) return undefined;
-          if (latestMessageId === undefined || latestMessageId !== messageId) return undefined;
+          const row = buttonRef.current?.closest('[data-turn-tail]');
+          if (!row) return undefined;
+          const rows = document.querySelectorAll('[data-turn-tail]');
+          if (rows.length === 0 || rows[rows.length - 1] !== row) return undefined;
           let cancelled = false;
           const timer = window.setTimeout(async () => {
             if (cancelled || player.messageId !== null) return;
@@ -805,7 +786,49 @@ window.__ModuleLoader__.load({
           borderRadius: '4px',
         };
 
-        return null;
+        return h(
+          'span',
+          { style: { display: 'inline-flex', alignItems: 'center', gap: '1px', flex: 'none' } },
+          h(
+            'button',
+            {
+              ref: buttonRef,
+              type: 'button',
+              title: error || label,
+              'aria-label': label,
+              'data-mimo-tts': 'speak',
+              style: buttonStyle,
+              onClick: toggle,
+            },
+            playing ? h(StopIcon, null) : busy ? h(SpeakerIcon, { size: 16 }) : h(SpeakerIcon, null),
+          ),
+          h(
+            'button',
+            {
+              type: 'button',
+              title: t('menu'),
+              'aria-label': t('menu'),
+              'data-mimo-tts': 'settings',
+              style: { ...buttonStyle, width: '12px', opacity: 0.45 },
+              onClick: openMenu,
+            },
+            h(CaretIcon, null),
+          ),
+          menuAnchor
+            ? h(SettingsMenu, {
+                anchor: menuAnchor,
+                prefs,
+                voices,
+                t,
+                onChange: (next) => {
+                  setPrefs(next);
+                  writePrefs(next);
+                  setMenuAnchor(null);
+                },
+                onClose: () => setMenuAnchor(null),
+              })
+            : null,
+        );
       };
     }
 
